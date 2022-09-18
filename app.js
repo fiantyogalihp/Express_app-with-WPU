@@ -1,12 +1,25 @@
 const express = require("express");
-const expressLayouts = require('express-ejs-layouts')
+const expressLayouts = require('express-ejs-layouts');
+const morgan = require("morgan");
 const app = express();
 const port = 3000;
 
 // * setup ejs
 app.set("view engine", "ejs");
+// * Third-party middleware
 app.use(expressLayouts)
+app.use(morgan('dev'))
 
+// * Built-in middleware
+app.use(express.static('public'))
+
+// * Application level middleware
+app.use((req, res, next) => {
+  const time = new Date().toISOString()
+
+  console.log(`Time: ${time}`);
+  next();
+})
 
 app.get("/", (req, res) => {
   const mahasiswa = [
@@ -49,6 +62,10 @@ app.get("/product/:id", (req, res) => {
   res.send(`Product ID: ${id} <br> Category: ${category}`);
 });
 
+app.use((req, res) => {
+  res.send(`<h1>404</h1>`)
+})
+
 app.listen(port, () => {
-  console.log(`Example app listening on http://localhost:${port}`);
+  console.log(`App listening on http://localhost:${port}`);
 });
