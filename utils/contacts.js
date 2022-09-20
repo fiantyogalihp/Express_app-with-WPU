@@ -1,4 +1,5 @@
 const fs = require('fs');
+const path = require('path');
 
 const dirPath = './data';
 if (!fs.existsSync(dirPath)) {
@@ -12,16 +13,32 @@ if (!fs.existsSync(dataPath)) {
 }
 
 // 
-const loadContact = () => {
+const loadContacts = () => {
   const fileBuffer = fs.readFileSync('data/contacts.json', 'utf-8');
   const contacts = JSON.parse(fileBuffer);
   return contacts;
 };
 
 const findContact = (name) => {
-  const contacts = loadContact();
+  const contacts = loadContacts();
   const contact = contacts.find((contact) => contact.name.toLowerCase() === name.toLowerCase());
   return contact;
 }
 
-module.exports = { loadContact, findContact }
+const saveContacts = (contacts) => {
+  fs.writeFileSync('data/contacts.json', JSON.stringify(contacts));
+}
+
+const addContact = (contact) => {
+  const contacts = loadContacts();
+  contacts.push(contact);
+  saveContacts(contacts);
+}
+
+const checkDuplicate = (contactName) => {
+  const contacts = loadContacts();
+  const contact = contacts.find((contact) => contact.name === contactName);
+  return contact;
+}
+
+module.exports = { loadContacts, findContact, addContact, checkDuplicate }
