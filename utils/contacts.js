@@ -1,5 +1,4 @@
 const fs = require('fs');
-const path = require('path');
 
 const dirPath = './data';
 if (!fs.existsSync(dirPath)) {
@@ -41,4 +40,19 @@ const checkDuplicate = (contactName) => {
   return contact;
 }
 
-module.exports = { loadContacts, findContact, addContact, checkDuplicate }
+const deleteContact = (contactName) => {
+  const contacts = loadContacts();
+  const filteredContact = contacts.filter((contact) => contact.name !== contactName);
+  saveContacts(filteredContact);
+}
+
+const updateContacts = (newContact) => {
+  const contacts = loadContacts();
+  // * hilangkan oldContact yang namanya sama dengan oldName 
+  const filteredContact = contacts.filter(contact => contact.name !== newContact.oldName);
+  delete newContact.oldName;
+  filteredContact.push(newContact);
+  saveContacts(filteredContact);
+}
+
+module.exports = { loadContacts, findContact, addContact, checkDuplicate, deleteContact, updateContacts }
