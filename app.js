@@ -25,6 +25,7 @@ app.use(session({
 })) // * setup session
 app.use(flash()) // * setup flash
 
+// * Root path
 app.get("/", (req, res) => {
   const mahasiswa = [
     {
@@ -50,10 +51,12 @@ app.get("/", (req, res) => {
   })
 })
 
+// * About path
 app.get("/about", (req, res) => {
   res.render("about", { layout: 'layouts/main-layout', title: 'Halaman About' })
 })
 
+// * Contact path
 app.get("/contact", (req, res) => {
   const contacts = loadContacts();
 
@@ -65,6 +68,7 @@ app.get("/contact", (req, res) => {
   })
 })
 
+// * Add Contact path
 app.get('/contact/add', (req, res) => {
   res.render('add_contact', {
     title: 'Form Tambah Data Contact',
@@ -72,6 +76,7 @@ app.get('/contact/add', (req, res) => {
   })
 })
 
+// * Post Contact Data path
 app.post('/contact', [
   body('name').custom((value) => {
     const duplicate = checkDuplicate(value);
@@ -98,6 +103,7 @@ app.post('/contact', [
     }
   })
 
+// * Delete Contact Data path
 app.get('/contact/delete/:name', (req, res) => {
   const { name } = req.params;
 
@@ -112,6 +118,7 @@ app.get('/contact/delete/:name', (req, res) => {
   }
 })
 
+// * Edit Contact path
 app.get('/contact/edit/:name', (req, res) => {
   const { name } = req.params;
 
@@ -124,6 +131,7 @@ app.get('/contact/edit/:name', (req, res) => {
   })
 })
 
+// * Post Edit Contact data path
 app.post('/contact/update', [
   body('name').custom((value, { req }) => {
     const duplicate = checkDuplicate(value);
@@ -154,6 +162,7 @@ app.post('/contact/update', [
     }
   })
 
+// * Detail Contact path
 app.get("/contact/:name", (req, res) => {
   const { name } = req.params;
 
@@ -166,10 +175,12 @@ app.get("/contact/:name", (req, res) => {
   })
 })
 
+// *  404 Handling path
 app.use((req, res) => {
   res.send(`<h1>404</h1>`)
 })
 
+// * server-side Express Listen Info 
 app.listen(port, () => {
   // eslint-disable-next-line no-console
   console.log(`App listening on http://localhost:${port}`);
