@@ -3,27 +3,27 @@ const expressLayouts = require('express-ejs-layouts');
 const session = require('express-session');
 const cookieParser = require('cookie-parser');
 const flash = require('connect-flash');
+
+// * DB connection
+require('./utils/db');
+const Contact = require('./model/contact');
+
 const app = express();
 const port = 3000;
 
-const { loadContacts, findContact, addContact, checkDuplicate, deleteContact, updateContacts } = require('./utils/contacts');
-const { body, validationResult, check } = require('express-validator');
-
-// * setup ejs
-app.set("view engine", "ejs")
-
-// * Middleware
-app.use(expressLayouts) // * Third-party middleware
-app.use(express.static('public')) // * Built-in middleware
-app.use(express.urlencoded({ extended: true })) // * Built-in urlencoded middleware
-app.use(cookieParser()) // * setup cookie parser
+// * setup ejs, flash
+app.set("view engine", "ejs");
+app.use(expressLayouts);
+app.use(express.static('public'));
+app.use(express.urlencoded({ extended: true }));
+app.use(cookieParser());
 app.use(session({
   cookie: { maxAge: 6000 },
   secret: 'secret',
   resave: true,
   saveUninitialized: true,
-})) // * setup session
-app.use(flash()) // * setup flash
+}));
+app.use(flash());
 
 // * Root path
 app.get("/", (req, res) => {
@@ -45,7 +45,7 @@ app.get("/", (req, res) => {
   res.render("index", {
     layout: 'layouts/main-layout',
     title: 'halaman Home',
-    nama: "Fiantyo Galih",
+    name: "Fiantyo Galih",
     email: "fiantyogalih@gmail.com",
     mahasiswa,
   })
@@ -57,8 +57,8 @@ app.get("/about", (req, res) => {
 })
 
 // * Contact path
-app.get("/contact", (req, res) => {
-  const contacts = loadContacts();
+app.get("/contact", async (req, res) => {
+  const contacts = await Contact.find();
 
   res.render("contact", {
     layout: 'layouts/main-layout',
@@ -68,7 +68,7 @@ app.get("/contact", (req, res) => {
   })
 })
 
-// * Add Contact path
+/* // * Add Contact path
 app.get('/contact/add', (req, res) => {
   res.render('add_contact', {
     title: 'Form Tambah Data Contact',
@@ -173,6 +173,19 @@ app.get("/contact/:name", (req, res) => {
     title: 'halaman Detail Contact',
     contact,
   })
+}) */
+
+// * Detail Contact path
+app.get("/contact/:name", async (req, res) => {
+  const { name } = req.params;
+
+  const contact = await Contact.findOne({ name: name });
+
+  res.render('detail_contact', {
+    layout: 'layouts/main-layout',
+    title: 'halaman Detail Contact',
+    contact,
+  })
 })
 
 // *  404 Handling path
@@ -183,5 +196,5 @@ app.use((req, res) => {
 // * server-side Express Listen Info 
 app.listen(port, () => {
   // eslint-disable-next-line no-console
-  console.log(`App listening on http://localhost:${port}`);
+  console.log(`MongoDB Contact App | listening on http://localhost:${port}`);
 });
