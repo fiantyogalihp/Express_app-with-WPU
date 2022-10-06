@@ -33,22 +33,22 @@ app.get("/", (req, res) => {
   const mahasiswa = [
     {
       name: "fiantyogalihp",
-      fetish: "nun",
+      email: "fiantioGalih@gmail.com",
     },
     {
       name: "zakie irawan",
-      fetish: "oneesan",
+      email: "zakikirawan@yahoo.com",
     },
     {
       name: "gilang rezaa",
-      fetish: "loli",
+      email: "gialdz@sch.co.id",
     },
   ];
 
   res.render("index", {
     layout: 'layouts/main-layout',
     title: 'halaman Home',
-    name: "Fiantyo Galih",
+    name: "User",
     email: "fiantyogalih@gmail.com",
     mahasiswa,
   })
