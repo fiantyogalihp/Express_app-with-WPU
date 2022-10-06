@@ -3,6 +3,8 @@ const expressLayouts = require('express-ejs-layouts');
 const session = require('express-session');
 const cookieParser = require('cookie-parser');
 const flash = require('connect-flash');
+const { body, validationResult, check } = require('express-validator');
+const methodOverride = require('method-override');
 
 // * DB connection
 require('./utils/db');
@@ -24,6 +26,7 @@ app.use(session({
   saveUninitialized: true,
 }));
 app.use(flash());
+app.use(methodOverride('_method'));
 
 // * Root path
 app.get("/", (req, res) => {
@@ -68,7 +71,8 @@ app.get("/contact", async (req, res) => {
   })
 })
 
-/* // * Add Contact path
+
+// * Add Contact path
 app.get('/contact/add', (req, res) => {
   res.render('add_contact', {
     title: 'Form Tambah Data Contact',
@@ -78,9 +82,8 @@ app.get('/contact/add', (req, res) => {
 
 // * Post Contact Data path
 app.post('/contact', [
-  body('name').custom((value) => {
-    const duplicate = checkDuplicate(value);
-
+  body('name').custom(async (value) => {
+    const duplicate = await Contact.findOne({ name: value });
     if (duplicate) {
       throw new Error('Duplicate Name') // ! this return false, but with custom message
     }
@@ -97,32 +100,27 @@ app.post('/contact', [
       })
     } else {
 
-      addContact(req.body);
-      req.flash('msg', 'Successfully added contact')
-      res.redirect('/contact')
+      Contact.insertMany(req.body, (error, result) => {
+        req.flash('msg', 'Successfully added contact')
+        res.redirect('/contact')
+      });
     }
   })
 
-// * Delete Contact Data path
-app.get('/contact/delete/:name', (req, res) => {
-  const { name } = req.params;
-
-  const contact = findContact(name);
-
-  if (!contact) {
-    res.status(404).send('<h1>Contact not found</h1>')
-  } else {
-    deleteContact(name);
+// * delete contact
+app.delete('/contact', (req, res) => {
+  Contact.deleteOne({ _id: req.body._id }).then((result) => {
     req.flash('msg', 'Successfully Deleted contact')
     res.redirect('/contact')
-  }
+  })
+
 })
 
 // * Edit Contact path
-app.get('/contact/edit/:name', (req, res) => {
+app.get('/contact/edit/:name', async (req, res) => {
   const { name } = req.params;
 
-  const contact = findContact(name);
+  const contact = await Contact.findOne({ name: name });
 
   res.render('edit_contact', {
     title: 'Form Ubah Data Contact',
@@ -132,9 +130,9 @@ app.get('/contact/edit/:name', (req, res) => {
 })
 
 // * Post Edit Contact data path
-app.post('/contact/update', [
-  body('name').custom((value, { req }) => {
-    const duplicate = checkDuplicate(value);
+app.put('/contact', [
+  body('name').custom(async (value, { req }) => {
+    const duplicate = await Contact.findOne({ name: value });
 
     const { oldName } = req.body;
 
@@ -142,7 +140,7 @@ app.post('/contact/update', [
       throw new Error('Duplicate Name!'); // ! this return false, but with custom message
     }
 
-    return true
+    return true;
   }),
   check('email', 'Email not valid!').isEmail(), check('nohp', 'No HP not valid!').isMobilePhone('id-ID')], (req, res) => {
     const errors = validationResult(req);
@@ -156,24 +154,20 @@ app.post('/contact/update', [
       })
     } else {
 
-      updateContacts(req.body);
-      req.flash('msg', 'Successfully changed contact')
-      res.redirect('/contact')
+      Contact.updateOne(
+        { _id: req.body._id },
+        {
+          $set: {
+            name: req.body.name,
+            email: req.body.email,
+            nohp: req.body.nohp,
+          }
+        }).then((result) => {
+          req.flash('msg', 'Successfully changed contact')
+          res.redirect('/contact')
+        });
     }
   })
-
-// * Detail Contact path
-app.get("/contact/:name", (req, res) => {
-  const { name } = req.params;
-
-  const contact = findContact(name);
-
-  res.render('detail_contact', {
-    layout: 'layouts/main-layout',
-    title: 'halaman Detail Contact',
-    contact,
-  })
-}) */
 
 // * Detail Contact path
 app.get("/contact/:name", async (req, res) => {
