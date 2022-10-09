@@ -28,7 +28,7 @@ app.use(session({
 app.use(flash());
 app.use(methodOverride('_method'));
 
-// * Root path
+// * Root Preview path
 app.get("/", (req, res) => {
   const mahasiswa = [
     {
@@ -54,12 +54,12 @@ app.get("/", (req, res) => {
   })
 })
 
-// * About path
+// * About Preview path
 app.get("/about", (req, res) => {
   res.render("about", { layout: 'layouts/main-layout', title: 'Halaman About' })
 })
 
-// * Contact path
+// * Contact Preview path
 app.get("/contact", async (req, res) => {
   const contacts = await Contact.find();
 
@@ -72,7 +72,7 @@ app.get("/contact", async (req, res) => {
 })
 
 
-// * Add Contact path
+// * Add Contact Preview path
 app.get('/contact/add', (req, res) => {
   res.render('add_contact', {
     title: 'Form Tambah Data Contact',
@@ -107,7 +107,7 @@ app.post('/contact', [
     }
   })
 
-// * delete contact
+// * delete contact Data path
 app.delete('/contact', (req, res) => {
   Contact.deleteOne({ _id: req.body._id }).then((result) => {
     req.flash('msg', 'Successfully Deleted contact')
@@ -116,7 +116,7 @@ app.delete('/contact', (req, res) => {
 
 })
 
-// * Edit Contact path
+// * Edit Contact Preview path
 app.get('/contact/edit/:name', async (req, res) => {
   const { name } = req.params;
 
@@ -129,7 +129,7 @@ app.get('/contact/edit/:name', async (req, res) => {
   })
 })
 
-// * Post Edit Contact data path
+// * Put Edit Contact data path
 app.put('/contact', [
   body('name').custom(async (value, { req }) => {
     const duplicate = await Contact.findOne({ name: value });
@@ -169,7 +169,7 @@ app.put('/contact', [
     }
   })
 
-// * Detail Contact path
+// * Detail Contact Preview path
 app.get("/contact/:name", async (req, res) => {
   const { name } = req.params;
 
@@ -184,7 +184,7 @@ app.get("/contact/:name", async (req, res) => {
 
 // *  404 Handling path
 app.use((req, res) => {
-  res.send(`<h1>404</h1>`)
+  res.send(`<h1 class="text-center mt-20">404</h1>`)
 })
 
 // * server-side Express Listen Info 
