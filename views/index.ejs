@@ -1,8 +1,8 @@
-<h1>Web Server NodeJs!</h1>
+<h1 class="text-center mb-5">Welcame to Contact App!</h1>
 
-<h2>Halo <%= nama %></h2>
+<h2>Halo, <%= name %>!</h2>
 
-<h2>DAFTAR PARTY SABLENG</h2>
+<h2 class="display-6">DAFTAR CONTOH CONTACT :</h2>
 
 <!-- * control flow EJS -->
 <% if (mahasiswa.length < 1) { %>
@@ -12,7 +12,7 @@
 <% mahasiswa.forEach(map => { %>
 <ul>
   <li>Nama: <%= map.name %></li>
-  <li>Fetish: <%= map.fetish %></li>
+  <li>Email: <%= map.email %></li>
 </ul>
 <% }) %>
 <!--  -->

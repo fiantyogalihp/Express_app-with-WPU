@@ -4,7 +4,7 @@ const session = require('express-session');
 const cookieParser = require('cookie-parser');
 const flash = require('connect-flash');
 const app = express();
-const port = 3000;
+const port = 3001;
 
 const { loadContacts, findContact, addContact, checkDuplicate, deleteContact, updateContacts } = require('./utils/contacts');
 const { body, validationResult, check } = require('express-validator');
@@ -30,22 +30,22 @@ app.get("/", (req, res) => {
   const mahasiswa = [
     {
       name: "fiantyogalihp",
-      fetish: "nun",
+      email: "fiantioGalih@gmail.com",
     },
     {
       name: "zakie irawan",
-      fetish: "oneesan",
+      email: "zakikirawan@yahoo.com",
     },
     {
       name: "gilang rezaa",
-      fetish: "loli",
+      email: "gialdz@sch.co.id",
     },
   ];
 
   res.render("index", {
     layout: 'layouts/main-layout',
     title: 'halaman Home',
-    nama: "Fiantyo Galih",
+    name: "User",
     email: "fiantyogalih@gmail.com",
     mahasiswa,
   })
